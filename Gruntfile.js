@@ -30,11 +30,20 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      html: {
+      app: {
         expand: true,
         cwd: 'app/',
         src: '*.html',
         dest: 'tmp/public/',
+        flatten: true,
+        filter: 'isFile',
+      },
+
+      tests: {
+        expand: true,
+        cwd: 'tests/',
+        src: '*.html',
+        dest: 'tmp/public/tests/',
         flatten: true,
         filter: 'isFile',
       }
@@ -63,8 +72,19 @@ module.exports = function(grunt) {
     },
 
     watch: {
+      app: {
+        files: ['app/**/*'],
+        tasks: ['dist']
+      },
+
+      tests: {
+        files: ['tests/**/*'],
+        tasks: ['tests']
+      }
     }
   });
 
-  grunt.registerTask('default', ['clean', 'emberTemplates', 'concat', 'copy', 'connect', 'watch']);
+  grunt.registerTask('dist', ['emberTemplates', 'concat:app', 'copy:app']);
+  grunt.registerTask('tests', ['concat:tests', 'copy:tests']);
+  grunt.registerTask('default', ['clean', 'dist', 'tests', 'connect', 'watch']);
 };
