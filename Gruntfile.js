@@ -19,6 +19,13 @@ module.exports = function(grunt) {
         dest: 'tmp/public/assets/app.js'
       },
 
+      tests: {
+        src: [
+          'tests/**/*.js',
+        ],
+        dest: 'tmp/public/assets/tests.js'
+      },
+
       vendor: {
         src: [
           'vendor/jquery/dist/jquery.js',
@@ -26,7 +33,15 @@ module.exports = function(grunt) {
           'vendor/ember/ember.js',
         ],
         dest: 'tmp/public/assets/vendor.js'
-      }
+      },
+
+      vendorTest: {
+        src: [
+          'vendor/qunit/qunit/qunit.js',
+          'vendor/ember-qunit-builds/ember-qunit.js',
+        ],
+        dest: 'tmp/public/assets/vendorTests.js'
+      },
     },
 
     copy: {
@@ -46,7 +61,16 @@ module.exports = function(grunt) {
         dest: 'tmp/public/tests/',
         flatten: true,
         filter: 'isFile',
-      }
+      },
+
+      vendorTests: {
+        expand: true,
+        cwd: 'vendor/qunit/qunit/',
+        src: '*.css',
+        dest: 'tmp/public/assets/',
+        flatten: true,
+        filter: 'isFile',
+      },
     },
 
     connect: {
@@ -85,6 +109,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('dist', ['emberTemplates', 'concat:app', 'copy:app']);
-  grunt.registerTask('tests', ['concat:tests', 'copy:tests']);
-  grunt.registerTask('default', ['clean', 'dist', 'tests', 'connect', 'watch']);
+  grunt.registerTask('tests', ['concat:tests', 'copy:tests', 'copy:vendorTests']);
+  grunt.registerTask('vendor', ['concat:vendor', 'concat:vendorTest']);
+  grunt.registerTask('default', ['clean', 'dist', 'vendor', 'tests', 'connect', 'watch']);
 };
